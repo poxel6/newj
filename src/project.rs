@@ -1,14 +1,8 @@
 use crate::strings::Strings;
 use std::{
+    error,
     fs::{self},
-    io::{self},
 };
-
-#[derive(Debug)]
-pub struct PrjectStructure {
-    pub directories: Vec<String>,
-    pub files: Vec<String>,
-}
 
 #[derive(Debug)]
 pub struct Project {
@@ -18,32 +12,27 @@ pub struct Project {
 }
 
 impl Project {
-    pub fn new(name: &String, domain: &String) -> Result<Self, io::Error> {
+    pub fn new(name: &String, domain: &String) -> Result<(), Box<dyn error::Error>> {
         let project = Self {
             name: name.to_string(),
             domain: domain.to_string(),
         };
-        PrjectStructure::new(&project)?;
-        Ok(project)
+        let JavaProject { directories, files } = JavaProject::new(project);
+        PrjectStructure::new(directories, files)?;
+        Ok(())
     }
 }
 
-impl PrjectStructure {
-    pub fn create_dirs(&self) {
-        for dir in &self.directories {
-            _ = fs::create_dir_all(&dir);
-        }
-    }
-    pub fn create_files(&self) {
-        for file in &self.files {
-            _ = fs::File::create_new(&file);
-        }
-    }
+pub struct JavaProject {
+    pub directories: Vec<ProjectDirectory>,
+    pub files: Vec<ProjectFile>,
+}
 
-    pub fn new(project: &Project) -> Result<Self, io::Error> {
+impl JavaProject {
+    pub fn new(project: Project) -> Self {
         let module = "";
         let root = format!("{}/{module}/src", project.name);
-        // let root = if modular { 
+        // let root = if modular {
         //     format!("{}/src", project.name)
         // }
         // else {
@@ -60,21 +49,76 @@ impl PrjectStructure {
             "{root}/test/{language}/{domain_path}/{}",
             name.to_lowercase()
         );
-        let project = Self {
-            directories: vec![format!("{main}"), format!("{test}")],
-            files: vec![
-                format!("{root}/build.gradle.kt"),
-                format!("{root}/.gitignore"),
-                format!("{root}/gradle.properties"),
-                format!("{main}/App.java"),
-                format!("{main}/{}.java", name.to_capitilize()),
-                format!("{test}/{}Test.java", name.to_capitilize()),
-            ],
-        };
 
-        project.create_dirs();
-        project.create_files();
+        let directories = ProjectDirectory::from(vec![format!("{main}"), format!("{test}")]);
+        let files = ProjectFile::from(vec![
+            format!("{root}/build.gradle.kt"),
+            format!("{root}/.gitignore"),
+            format!("{root}/gradle.properties"),
+            format!("{main}/App.java"),
+            format!("{main}/{}.java", name.to_capitilize()),
+            format!("{test}/{}Test.java", name.to_capitilize()),
+        ]);
 
-        Ok(project)
+        Self { directories, files }
+    }
+}
+
+#[derive(Debug)]
+pub struct ProjectFile(pub String);
+
+impl ProjectFile {
+    fn new(name: &String) -> Self {
+        Self(name.clone())
+    }
+    pub fn from(names: Vec<String>) -> Vec<Self> {
+        names.iter().map(|n| Self::new(n)).collect()
+    }
+    pub fn create_all(names: Vec<String>) -> Result<(), Box<dyn error::Error>> {
+        for name in names {
+            fs::File::create_new(name)?;
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug)]
+pub struct ProjectDirectory {
+    pub path: String,
+    pub directories: Vec<ProjectDirectory>,
+    pub files: Vec<ProjectFile>,
+}
+
+impl ProjectDirectory {
+    pub fn new(path: &String) -> Self {
+        Self {
+            path: path.clone(),
+            directories: vec![],
+            files: vec![],
+        }
+    }
+    pub fn from(dirs: Vec<String>) -> Vec<Self> {
+        dirs.iter().map(|d| Self::new(d)).collect()
+    }
+}
+
+#[derive(Debug)]
+pub struct PrjectStructure {
+    pub directories: Vec<ProjectDirectory>,
+    pub files: Vec<ProjectFile>,
+}
+
+impl PrjectStructure {
+    pub fn new(
+        directories: Vec<ProjectDirectory>,
+        files: Vec<ProjectFile>,
+    ) -> Result<Self, Box<dyn error::Error>> {
+        for dir in &directories {
+            fs::create_dir_all(dir.path.clone())?;
+        }
+        for file in &files {
+            fs::File::create_new(file.0.clone())?;
+        }
+        Ok(Self { directories, files })
     }
 }
