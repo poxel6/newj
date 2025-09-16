@@ -14,6 +14,7 @@ pub struct PrjectStructure {
 pub struct Project {
     pub name: String,
     pub domain: String,
+    // pub modular: bool,
 }
 
 impl Project {
@@ -40,7 +41,14 @@ impl PrjectStructure {
     }
 
     pub fn new(project: &Project) -> Result<Self, io::Error> {
-        let root = format!("{}/src", project.name);
+        let module = "";
+        let root = format!("{}/{module}/src", project.name);
+        // let root = if modular { 
+        //     format!("{}/src", project.name)
+        // }
+        // else {
+        //     format!("{}/app/src", project.name)
+        // };
         let language = "java";
         let domain_path = project.domain.replace(".", "/");
         let name = &project.name;

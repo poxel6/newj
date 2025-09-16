@@ -1,4 +1,5 @@
 use clap::{Arg, ArgAction, ArgMatches, Command};
+use inquire::Text;
 
 #[derive(Debug)]
 pub struct Cli {
@@ -16,22 +17,38 @@ impl Cli {
                 Arg::new("name")
                     .long("name")
                     .short('n')
-                    .default_value("exmpleapp")
                     .action(ArgAction::Set)
+                    .required(false)
                     .help("Name of the project"),
             )
             .arg(
                 Arg::new("domain")
                     .long("domain")
                     .short('d')
-                    .default_value("com.example")
                     .action(ArgAction::Set)
+                    .required(false)
                     .help("Domain/Id of the project"),
             );
 
         let matches = cmd.get_matches();
-        let name = matches.get_one::<String>("name").unwrap().to_string();
-        let domain = matches.get_one::<String>("domain").unwrap().to_string();
+
+        let name = matches
+            .get_one::<String>("name")
+            .unwrap_or(
+                &Text::new("Enter project name (default: app):")
+                    .prompt()
+                    .unwrap_or_else(|_| String::from("app")),
+            )
+            .to_string();
+
+        let domain = matches
+            .get_one::<String>("domain")
+            .unwrap_or(
+                &Text::new("Enter package name (default: org.example):")
+                    .prompt()
+                    .unwrap_or_else(|_| String::from("org.example")),
+            )
+            .to_string();
 
         Self {
             matches,
