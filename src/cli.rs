@@ -1,3 +1,4 @@
+use crate::strings::Strings;
 use clap::{Arg, ArgAction, ArgMatches, Command};
 use inquire::Text;
 
@@ -13,22 +14,8 @@ impl Cli {
         let cmd = Command::new("newj")
             .bin_name("newj")
             .about("Setup your project structure")
-            .arg(
-                Arg::new("name")
-                    .long("name")
-                    .short('n')
-                    .action(ArgAction::Set)
-                    .required(false)
-                    .help("Name of the project"),
-            )
-            .arg(
-                Arg::new("domain")
-                    .long("domain")
-                    .short('d')
-                    .action(ArgAction::Set)
-                    .required(false)
-                    .help("Domain/Id of the project"),
-            );
+            .arg(arg_from("name"))
+            .arg(arg_from("domain"));
 
         let matches = cmd.get_matches();
 
@@ -58,4 +45,16 @@ fn prompt(prompt: &str, default: &str) -> String {
         .with_placeholder(default)
         .prompt()
         .unwrap_or_else(|_| default.to_string())
+}
+
+fn arg_from(str: &str) -> Arg {
+    Arg::new(str.to_string())
+        .long(str.to_string())
+        .short(str.chars().nth(0).expect("Expects string to not be empty"))
+        .action(ArgAction::Set)
+        .required(false)
+        .help(format!(
+            "{} of the project",
+            str.to_string().to_capitilize()
+        ))
 }
