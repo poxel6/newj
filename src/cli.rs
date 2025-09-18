@@ -36,13 +36,16 @@ impl Cli {
             Some(name) => name.to_string(),
             None => prompt("Enter project name", "app"),
         };
+
         let domain = match matches.get_one::<String>("domain") {
             Some(domain) => domain.to_string(),
             None => prompt("Enter package name", "org.example"),
         };
 
+        let matches = matches.clone();
+
         Self {
-            matches: matches.clone(),
+            matches,
             name,
             domain,
         }
@@ -50,7 +53,9 @@ impl Cli {
 }
 
 fn prompt(prompt: &str, default: &str) -> String {
-    Text::new(&format!("{} (default: {}):", &prompt, &default))
+    Text::new(&prompt)
+        .with_default(default)
+        .with_placeholder(default)
         .prompt()
         .unwrap_or_else(|_| default.to_string())
 }
