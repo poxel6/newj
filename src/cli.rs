@@ -12,7 +12,7 @@ impl Cli {
     pub fn from_args() -> Self {
         let cmd = Command::new("newj")
             .bin_name("newj")
-            .about("Setup your java project structure")
+            .about("Setup your project structure")
             .arg(
                 Arg::new("name")
                     .long("name")
@@ -32,28 +32,25 @@ impl Cli {
 
         let matches = cmd.get_matches();
 
-        let name = matches
-            .get_one::<String>("name")
-            .unwrap_or(
-                &Text::new("Enter project name (default: app):")
-                    .prompt()
-                    .unwrap_or_else(|_| String::from("app")),
-            )
-            .to_string();
-
-        let domain = matches
-            .get_one::<String>("domain")
-            .unwrap_or(
-                &Text::new("Enter package name (default: org.example):")
-                    .prompt()
-                    .unwrap_or_else(|_| String::from("org.example")),
-            )
-            .to_string();
+        let name = match matches.get_one::<String>("name") {
+            Some(name) => name.to_string(),
+            None => prompt("Enter project name", "app"),
+        };
+        let domain = match matches.get_one::<String>("domain") {
+            Some(domain) => domain.to_string(),
+            None => prompt("Enter package name", "org.example"),
+        };
 
         Self {
-            matches,
+            matches: matches.clone(),
             name,
             domain,
         }
     }
+}
+
+fn prompt(prompt: &str, default: &str) -> String {
+    Text::new(&format!("{} (default: {}):", &prompt, &default))
+        .prompt()
+        .unwrap_or_else(|_| default.to_string())
 }
