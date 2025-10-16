@@ -55,3 +55,8 @@ app
     ├── build.gradle.kt 
     └── gradle.properties 
 ```
+
+## TODO
+-[ ] rewrite `src/project.rs`
+-[ ] finish template system
+-[ ] add config file
