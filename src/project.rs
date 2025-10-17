@@ -21,14 +21,11 @@ impl From<Cli> for Project {
 }
 
 impl Project {
-    pub fn init(&self) -> Result<Self, io::Error> {
+    pub fn init(&self) -> Result<(), io::Error> {
         let structure = get_structure(&self);
         craete_dirs(&structure)?;
         create_files(&structure)?;
-        Ok(Self {
-            name: self.name.clone(),
-            domain: self.domain.clone(),
-        })
+        Ok(())
     }
 }
 
