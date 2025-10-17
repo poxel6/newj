@@ -32,7 +32,7 @@ impl Project {
         let main_resources = format!("{root}/main/resources");
         let test_resources = format!("{root}/test/resources");
 
-        let structure = Structure::from(vec![
+        let structure = vec![
             ProjectFile::new()
                 .name("App.java")
                 .path(&main)
@@ -51,27 +51,15 @@ impl Project {
                 .template(Template::new("gitignore", &self)),
             ProjectFile::new().path(&main_resources),
             ProjectFile::new().path(&test_resources),
-        ]);
-        craete_dirs(&structure.files)?;
-        create_files(&structure.files)?;
+        ];
+        craete_dirs(&structure)?;
+        create_files(&structure)?;
         Ok(Self {
             name: self.name.clone(),
             domain: self.domain.clone(),
         })
     }
 }
-
-pub struct Structure {
-    pub files: Vec<ProjectFile>,
-}
-
-impl From<Vec<ProjectFile>> for Structure {
-    fn from(files: Vec<ProjectFile>) -> Self {
-        Self { files }
-    }
-}
-
-impl Structure {}
 
 #[derive(Default, Debug)]
 pub struct ProjectFile {
