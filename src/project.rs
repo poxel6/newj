@@ -4,7 +4,7 @@ use std::{
     io,
 };
 
-use crate::template::Template;
+use crate::{cli::Cli, template::Template};
 
 #[derive(Debug)]
 pub struct Project {
@@ -12,8 +12,17 @@ pub struct Project {
     pub domain: String,
 }
 
+impl From<Cli> for Project {
+    fn from(cli: Cli) -> Self {
+        Self {
+            name: cli.name,
+            domain: cli.domain,
+        }
+    }
+}
+
 impl Project {
-    pub fn new(&self) -> Result<Self, Box<dyn error::Error>> {
+    pub fn init(&self) -> Result<Self, Box<dyn error::Error>> {
         let name = &self.name;
         let domain = &self.domain.replace(".", "/");
         let root = format!("{name}/src");
