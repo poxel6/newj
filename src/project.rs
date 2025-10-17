@@ -1,5 +1,4 @@
 use std::{
-    error,
     fs::{self, File},
     io,
 };
@@ -22,7 +21,7 @@ impl From<Cli> for Project {
 }
 
 impl Project {
-    pub fn init(&self) -> Result<Self, Box<dyn error::Error>> {
+    pub fn init(&self) -> Result<Self, io::Error> {
         let name = &self.name;
         let domain = &self.domain.replace(".", "/");
         let root = format!("{name}/src");
@@ -105,8 +104,8 @@ fn create_files(files: &Vec<ProjectFile>) -> Result<(), io::Error> {
                 // path are defined in a way that
                 // there is no distinction between
                 // dirs and files so I discard them here.
-                io::ErrorKind::IsADirectory => (),
-                _ => return Err(err),
+                io::ErrorKind::IsADirectory =>  println!("it ballright"),
+                _ =>  (),
             }
         }
     }

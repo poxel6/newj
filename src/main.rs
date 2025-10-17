@@ -1,14 +1,10 @@
-use newj::{cli::Cli, project::Project, template::Template};
+use newj::{cli::Cli, project::Project};
 
 fn main() {
     let cli = Cli::from_args();
 
-    let project = Project {
-        name: cli.name,
-        domain: cli.domain,
-    };
-
-    if let Err(err) = project.new() {
-        eprintln!("{}",err.to_string());
+    let project = Project::from(cli);
+    if let Err(err) = project.init() {
+        eprintln!("{}", err.to_string());
     }
 }
