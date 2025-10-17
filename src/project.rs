@@ -5,7 +5,7 @@ use std::{
 
 use crate::{cli::Cli, template::Template};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Default)]
 pub struct Project {
     pub name: String,
     pub domain: String,
@@ -22,34 +22,25 @@ impl From<Cli> for Project {
 
 impl Project {
     pub fn init(&self) -> Result<Self, io::Error> {
-        let name = &self.name;
-        let domain = &self.domain.replace(".", "/");
-        let root = format!("{name}/src");
-        let java = format!("java/{domain}/{name}");
-        let main = format!("{root}/main/{java}");
-        let test = format!("{root}/test/{java}");
-        let main_resources = format!("{root}/main/resources");
-        let test_resources = format!("{root}/test/resources");
-
         let structure = vec![
-            ProjectFile::new()
+            ProjectFile::new(&self)
                 .name("App.java")
-                .path(&main)
+                .path(ProjectPaths::Working)
                 .template(Template::new("Main.java", &self)),
-            ProjectFile::new()
+            ProjectFile::new(&self)
                 .name("build.gradle.kt")
-                .path(&root)
+                .path(ProjectPaths::Root)
                 .template(Template::new("gradle.kt", &self)),
-            ProjectFile::new()
+            ProjectFile::new(&self)
                 .name("AppTest.java")
-                .path(&test)
+                .path(ProjectPaths::TestWorking)
                 .template(Template::new("Test.java", &self)),
-            ProjectFile::new()
+            ProjectFile::new(&self)
                 .name(".gitignore")
-                .path(&root)
+                .path(ProjectPaths::Root)
                 .template(Template::new("gitignore", &self)),
-            ProjectFile::new().path(&main_resources),
-            ProjectFile::new().path(&test_resources),
+            ProjectFile::new(&self).path(ProjectPaths::MainResources),
+            ProjectFile::new(&self).path(ProjectPaths::TestResources),
         ];
         craete_dirs(&structure)?;
         create_files(&structure)?;
@@ -60,23 +51,47 @@ impl Project {
     }
 }
 
+pub enum ProjectPaths {
+    Root,
+    MainResources,
+    TestResources,
+    Working,
+    TestWorking,
+}
+
 #[derive(Default, Debug)]
 pub struct ProjectFile {
     pub name: String,
     pub path: String,
     pub template: Template,
+    project: Project,
 }
 
 impl ProjectFile {
-    pub fn new() -> Self {
-        Self::default()
+    pub fn new(project: &Project) -> Self {
+        Self {
+            project: project.clone(),
+            ..Default::default()
+        }
     }
     pub fn name(mut self, name: &str) -> Self {
         self.name = name.to_string();
         self
     }
-    pub fn path(mut self, path: &str) -> Self {
-        self.path = format!("{}", path);
+    pub fn path(mut self, path: ProjectPaths) -> Self {
+        let name = &self.project.name;
+        let domain = &self.project.domain.replace(".", "/");
+
+        let root = format!("{name}/src");
+        let main = format!("{root}/main");
+        let test = format!("{root}/test");
+        self.path = match path {
+            ProjectPaths::Root => root,
+            ProjectPaths::MainResources => format!("{main}/resources"),
+            ProjectPaths::TestResources => format!("{test}/resources"),
+            ProjectPaths::Working => format!("{main}/java/{domain}/{name}"),
+            ProjectPaths::TestWorking => format!("{test}/java/{domain}/{name}"),
+        };
         self
     }
     pub fn template(mut self, template: Template) -> Self {
