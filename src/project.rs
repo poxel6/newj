@@ -22,26 +22,7 @@ impl From<Cli> for Project {
 
 impl Project {
     pub fn init(&self) -> Result<Self, io::Error> {
-        let structure = vec![
-            ProjectFile::new(&self)
-                .name("App.java")
-                .path(ProjectPaths::Working)
-                .template(Template::new("Main.java", &self)),
-            ProjectFile::new(&self)
-                .name("build.gradle.kt")
-                .path(ProjectPaths::Root)
-                .template(Template::new("gradle.kt", &self)),
-            ProjectFile::new(&self)
-                .name("AppTest.java")
-                .path(ProjectPaths::TestWorking)
-                .template(Template::new("Test.java", &self)),
-            ProjectFile::new(&self)
-                .name(".gitignore")
-                .path(ProjectPaths::Root)
-                .template(Template::new("gitignore", &self)),
-            ProjectFile::new(&self).path(ProjectPaths::MainResources),
-            ProjectFile::new(&self).path(ProjectPaths::TestResources),
-        ];
+        let structure = get_structure(&self);
         craete_dirs(&structure)?;
         create_files(&structure)?;
         Ok(Self {
@@ -125,4 +106,27 @@ fn create_files(files: &Vec<ProjectFile>) -> Result<(), io::Error> {
         )?;
     }
     Ok(())
+}
+
+fn get_structure(project: &Project) -> Vec<ProjectFile> {
+    vec![
+        ProjectFile::new(project)
+            .name("App.java")
+            .path(ProjectPaths::Working)
+            .template(Template::new("Main.java", project)),
+        ProjectFile::new(project)
+            .name("build.gradle.kt")
+            .path(ProjectPaths::Root)
+            .template(Template::new("gradle.kt", project)),
+        ProjectFile::new(project)
+            .name("AppTest.java")
+            .path(ProjectPaths::TestWorking)
+            .template(Template::new("Test.java", project)),
+        ProjectFile::new(project)
+            .name(".gitignore")
+            .path(ProjectPaths::Root)
+            .template(Template::new("gitignore", project)),
+        ProjectFile::new(project).path(ProjectPaths::MainResources),
+        ProjectFile::new(project).path(ProjectPaths::TestResources),
+    ]
 }
