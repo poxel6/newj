@@ -1,4 +1,4 @@
-public class {{FILE_NAME}}Test {
+public class AppTest {
 	@Test
 	void test() {
 	}
