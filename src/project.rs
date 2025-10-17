@@ -94,20 +94,20 @@ fn craete_dirs(files: &Vec<ProjectFile>) -> Result<(), io::Error> {
 
 fn create_files(files: &Vec<ProjectFile>) -> Result<(), io::Error> {
     for file in files {
-        File::create_new(format!("{}/{}", file.path, file.name))?;
-        let write_result = fs::write(
-            format!("{}/{}", file.path, file.name),
-            file.template.content.as_bytes(),
-        );
-        if let Err(err) = write_result {
+        let new_file = File::create_new(format!("{}/{}", file.path, file.name));
+        if let Err(err) = new_file {
             match err.kind() {
                 // path are defined in a way that
                 // there is no distinction between
                 // dirs and files so I discard them here.
-                io::ErrorKind::IsADirectory =>  println!("it ballright"),
-                _ =>  (),
+                io::ErrorKind::IsADirectory => (),
+                _ => return Err(err),
             }
         }
+        fs::write(
+            format!("{}/{}", file.path, file.name),
+            file.template.content.as_bytes(),
+        )?;
     }
     Ok(())
 }
