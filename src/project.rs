@@ -23,24 +23,22 @@ impl Project {
         let main_resources = format!("{root}/main/resources");
         let test_resources = format!("{root}/test/resources");
 
-        Structure {
-            files: vec![
-                ProjectFile::new()
-                    .name("App.java")
-                    .path(&main)
-                    .template(Template::new("Main.java", &self)),
-                ProjectFile::new()
-                    .name("build.gradle.kt")
-                    .path(&root)
-                    .template(Template::new("gradle.kt", &self)),
-                ProjectFile::new()
-                    .name("AppTest.java")
-                    .path(&test)
-                    .template(Template::new("Test.java", &self)),
-                ProjectFile::new().path(&main_resources),
-                ProjectFile::new().path(&test_resources),
-            ],
-        }
+        Structure::from(vec![
+            ProjectFile::new()
+                .name("App.java")
+                .path(&main)
+                .template(Template::new("Main.java", &self)),
+            ProjectFile::new()
+                .name("build.gradle.kt")
+                .path(&root)
+                .template(Template::new("gradle.kt", &self)),
+            ProjectFile::new()
+                .name("AppTest.java")
+                .path(&test)
+                .template(Template::new("Test.java", &self)),
+            ProjectFile::new().path(&main_resources),
+            ProjectFile::new().path(&test_resources),
+        ])
         .create()?;
         Ok(Self {
             name: self.name.clone(),
@@ -51,6 +49,12 @@ impl Project {
 
 pub struct Structure {
     pub files: Vec<ProjectFile>,
+}
+
+impl From<Vec<ProjectFile>> for Structure {
+    fn from(files: Vec<ProjectFile>) -> Self {
+        Self { files }
+    }
 }
 
 impl Structure {
