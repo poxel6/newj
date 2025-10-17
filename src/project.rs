@@ -23,7 +23,7 @@ impl Project {
         let main_resources = format!("{root}/main/resources");
         let test_resources = format!("{root}/test/resources");
 
-        Structure::from(vec![
+        let structure = Structure::from(vec![
             ProjectFile::new()
                 .name("App.java")
                 .path(&main)
@@ -36,10 +36,15 @@ impl Project {
                 .name("AppTest.java")
                 .path(&test)
                 .template(Template::new("Test.java", &self)),
+            ProjectFile::new()
+                .name(".gitignore")
+                .path(&root)
+                .template(Template::new("gitignore", &self)),
             ProjectFile::new().path(&main_resources),
             ProjectFile::new().path(&test_resources),
-        ])
-        .create()?;
+        ]);
+        craete_dirs(&structure.files)?;
+        create_files(&structure.files)?;
         Ok(Self {
             name: self.name.clone(),
             domain: self.domain.clone(),
@@ -57,22 +62,7 @@ impl From<Vec<ProjectFile>> for Structure {
     }
 }
 
-impl Structure {
-    pub fn create(&self) -> Result<(), io::Error> {
-        for file in &self.files {
-            fs::create_dir_all(&file.path)?;
-            if file.name == "" {
-                continue;
-            }
-            File::create_new(format!("{}/{}", file.path, file.name))?;
-            fs::write(
-                format!("{}/{}", file.path, file.name),
-                file.template.content.as_bytes(),
-            )?
-        }
-        Ok(())
-    }
-}
+impl Structure {}
 
 #[derive(Default, Debug)]
 pub struct ProjectFile {
@@ -97,4 +87,31 @@ impl ProjectFile {
         self.template = template;
         self
     }
+}
+
+fn craete_dirs(files: &Vec<ProjectFile>) -> Result<(), io::Error> {
+    for file in files {
+        fs::create_dir_all(&file.path)?;
+    }
+    Ok(())
+}
+
+fn create_files(files: &Vec<ProjectFile>) -> Result<(), io::Error> {
+    for file in files {
+        File::create_new(format!("{}/{}", file.path, file.name))?;
+        let write_result = fs::write(
+            format!("{}/{}", file.path, file.name),
+            file.template.content.as_bytes(),
+        );
+        if let Err(err) = write_result {
+            match err.kind() {
+                // path are defined in a way that
+                // there is no distinction between
+                // dirs and files so I discard them here.
+                io::ErrorKind::IsADirectory => (),
+                _ => return Err(err),
+            }
+        }
+    }
+    Ok(())
 }
