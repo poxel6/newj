@@ -29,7 +29,15 @@ impl<'a> Placeholder<'a> {
     pub fn replace(&self, text: String) -> String {
         let text = text.replace(
             "{{MAIN_CLASS}}",
-            format!("{}.{}", self.0.domain, self.0.name).as_str(),
+            format!(
+                "{}.{}.App", /* Main file name */
+                &self.0.domain, &self.0.name
+            )
+            .as_str(),
+        );
+        let text = text.replace(
+            "{{PACKAGE}}",
+            format!("{}.{}", &self.0.domain, &self.0.name).as_str(),
         );
         let text = text.replace("{{FILE_NAME}}", &self.0.name.to_capitilize().to_string());
         let mut preset: HashMap<String, Vec<&str>> = HashMap::new();
