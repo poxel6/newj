@@ -112,7 +112,7 @@ fn get_structure(project: &Project) -> Vec<ProjectFile> {
             .path(ProjectPaths::Working)
             .template(Template::new("Main.java", project)),
         ProjectFile::new(project)
-            .name("build.gradle.kt")
+            .name("build.gradle.kts")
             .path(ProjectPaths::Root)
             .template(Template::new("gradle.kt", project)),
         ProjectFile::new(project)
