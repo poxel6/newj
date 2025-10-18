@@ -1,3 +1,5 @@
+use std::io;
+
 use newj::{cli::Cli, project::Project};
 
 fn main() {
@@ -5,6 +7,9 @@ fn main() {
 
     let project = Project::from(cli);
     if let Err(err) = project.init() {
-        eprintln!("{}", err.to_string());
+        match err.kind() {
+            io::ErrorKind::IsADirectory => (),
+            _ => eprintln!("{}", err.to_string()),
+        }
     }
 }
