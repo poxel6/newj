@@ -12,22 +12,24 @@ A simple CLI program to setup a simple and minimal java project.
 ## Features
 - [x] Generate full project structure somewhat reasonably.
 - [x] Generate files like `.gitignore`, `build.gradle.kt`, ...
-- [ ] Populates generated files with proper defaults.
-- [ ] Setup `gradle`.
-- [ ] Optional flag for project name, default: app. `-n`
-- [ ] Optional flag for project domain, default: org.example. `-d`
+- [x] Populates generated files with proper defaults.
+- [x] Setup `gradle`.
+- [x] Optional flag for project name, default: app. `-n`
+- [x] Optional flag for project domain, default: org.example. `-d`
+- [x] Optional flag for `preset` dependencies, defaults: "simple". `-p`
 - [ ] Optional flag for `git` repository, defaults: false. `-g`
 - [ ] Optional flag for making a modular java structure, default: false. `-m`
 - [ ] Optional flag for prompting for all of the optional flags. `-a` 🤡
 
 ## Usage
 ```sh
-newj [PATH] -n|--name [NAME] -d|--domain [DOMAIN]
+newj [PATH] -n|--name [NAME] -d|--domain [DOMAIN] -p|--preset [simple|mc-plugin|spring]
 ```
 ##### if `x` is not provided:
 PATH: default to present working directory <br>
 NAME (name of your project): prompts you<br>
 DOMAIN (domain used for your project): prompts you <br>
+PRESET: defaults to "simple".
 
 That being said, you can only type `newj` for a project in the present directory and prompts for name and domain.
 ```sh 
@@ -52,11 +54,5 @@ app
                 └── example 
                     └── app 
     ├── .gitignore 
-    ├── build.gradle.kt 
-    └── gradle.properties 
+    └── build.gradle.kt 
 ```
-
-## TODO
--[ ] rewrite `src/project.rs`
--[ ] finish template system
--[ ] add config file
