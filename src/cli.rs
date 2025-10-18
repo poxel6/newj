@@ -31,14 +31,10 @@ impl Cli {
             None => prompt("Enter package name", "org.example"),
         };
 
-        let preset = match matches.get_one::<String>("preset") {
-            Some(preset) => preset.to_string(),
-            None => Text::new("Enter a preset")
-                .with_default("simple")
-                .with_placeholder("simple, mc-plugin, spring")
-                .prompt()
-                .unwrap_or_else(|_| String::from("simple")),
-        };
+        let preset = matches
+            .get_one::<String>("preset")
+            .unwrap_or(&String::from("simple"))
+            .to_string();
 
         let matches = matches.clone();
 
