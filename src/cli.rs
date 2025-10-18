@@ -7,7 +7,7 @@ pub struct Cli {
     pub matches: ArgMatches,
     pub name: String,
     pub domain: String,
-    pub preset: String
+    pub preset: String,
 }
 
 impl Cli {
@@ -33,7 +33,11 @@ impl Cli {
 
         let preset = match matches.get_one::<String>("preset") {
             Some(preset) => preset.to_string(),
-            None => prompt("Select a preset", "mc-plugin, mc-mod, spring, simple"),
+            None => Text::new("Enter a preset")
+                .with_default("simple")
+                .with_placeholder("simple, mc-plugin, spring")
+                .prompt()
+                .unwrap_or_else(|_| String::from("simple")),
         };
 
         let matches = matches.clone();
