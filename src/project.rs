@@ -9,6 +9,7 @@ use crate::{cli::Cli, template::Template};
 pub struct Project {
     pub name: String,
     pub domain: String,
+    pub preset: String,
 }
 
 impl From<Cli> for Project {
@@ -16,6 +17,7 @@ impl From<Cli> for Project {
         Self {
             name: cli.name,
             domain: cli.domain,
+            preset: cli.preset,
         }
     }
 }
