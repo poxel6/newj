@@ -33,7 +33,7 @@ impl Cli {
 
         let preset = match matches.get_one::<String>("preset") {
             Some(preset) => preset.to_string(),
-            None => prompt("Select a preset", "Minecraft Plugin, Minecraft Mod, Spring, Simple"),
+            None => prompt("Select a preset", "mc-plugin, mc-mod, spring, simple"),
         };
 
         let matches = matches.clone();
