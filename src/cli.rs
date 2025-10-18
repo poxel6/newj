@@ -7,6 +7,7 @@ pub struct Cli {
     pub matches: ArgMatches,
     pub name: String,
     pub domain: String,
+    pub preset: String
 }
 
 impl Cli {
@@ -15,7 +16,8 @@ impl Cli {
             .bin_name("newj")
             .about("Setup your project structure")
             .arg(arg_from("name"))
-            .arg(arg_from("domain"));
+            .arg(arg_from("domain"))
+            .arg(arg_from("preset"));
 
         let matches = cmd.get_matches();
 
@@ -29,12 +31,18 @@ impl Cli {
             None => prompt("Enter package name", "org.example"),
         };
 
+        let preset = match matches.get_one::<String>("preset") {
+            Some(preset) => preset.to_string(),
+            None => prompt("Select a preset", "Minecraft Plugin, Minecraft Mod, Spring, Simple"),
+        };
+
         let matches = matches.clone();
 
         Self {
             matches,
             name,
             domain,
+            preset,
         }
     }
 }
