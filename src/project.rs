@@ -60,9 +60,9 @@ impl ProjectFile {
         let name = &self.project.name;
         let domain = &self.project.domain.replace(".", "/");
 
-        let root = format!("{name}/src");
-        let main = format!("{root}/main");
-        let test = format!("{root}/test");
+        let root = format!("{name}");
+        let main = format!("{root}/src/main");
+        let test = format!("{root}/src/test");
         self.path = match path {
             ProjectPaths::Root => root,
             ProjectPaths::MainResources => format!("{main}/resources"),
