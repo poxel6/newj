@@ -4,13 +4,17 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::cli::{Cli, prompt};
+use crate::{
+    cli::{Cli, prompt},
+    languages::Languages,
+};
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct Project {
     pub name: String,
     pub domain: String,
     pub preset: String,
+    pub language: Languages,
 }
 
 impl From<Cli> for Project {
@@ -27,10 +31,13 @@ impl From<Cli> for Project {
 
         let preset = cli.preset;
 
+        let language = Languages::Java;
+
         Self {
             name,
             domain,
             preset,
+            language,
         }
     }
 }
