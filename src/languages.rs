@@ -1,7 +1,9 @@
-#[derive(Debug, Clone)]
+use clap::ValueEnum;
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
 pub enum Languages {
     Java,
-    Kotlin
+    Kotlin,
 }
 
 impl Languages {
