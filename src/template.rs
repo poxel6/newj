@@ -15,7 +15,7 @@ pub struct Template {
 
 impl Template {
     pub fn new(project: &Project) -> Result<(), io::Error> {
-        let structure = get_structure();
+        let structure = get_structure(&project);
         craete_dirs(&structure, &project)?;
         create_files(&structure, &project)?;
         Ok(())
@@ -51,8 +51,8 @@ fn replace_placeholders(project: &Project, path: &Path) -> String {
     path
 }
 
-fn get_structure() -> Vec<PathBuf> {
-    let paths = fs::read_dir("template").unwrap();
+fn get_structure(project: &Project) -> Vec<PathBuf> {
+    let paths = fs::read_dir(format!("template/{}/", project.language.as_str())).unwrap();
     paths
         .into_iter()
         .map(|path| get_childs(path.unwrap().path()))
