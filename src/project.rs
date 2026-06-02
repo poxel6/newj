@@ -3,7 +3,10 @@ use std::{
     io,
 };
 
-use crate::{cli::Cli, template::Template};
+use crate::{
+    cli::{Cli, prompt},
+    template::Template,
+};
 
 #[derive(Debug, Clone, Default)]
 pub struct Project {
@@ -14,10 +17,22 @@ pub struct Project {
 
 impl From<Cli> for Project {
     fn from(cli: Cli) -> Self {
+        let name = cli
+            .name
+            .clone()
+            .unwrap_or_else(|| prompt("Enter project name", "app"));
+
+        let domain = cli
+            .domain
+            .clone()
+            .unwrap_or_else(|| prompt("Enter package name", "org.example"));
+
+        let preset = cli.preset;
+
         Self {
-            name: cli.name,
-            domain: cli.domain,
-            preset: cli.preset,
+            name,
+            domain,
+            preset,
         }
     }
 }
