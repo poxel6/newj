@@ -41,10 +41,16 @@ fn create_files(files: &Vec<PathBuf>, project: &Project) -> Result<(), io::Error
 
 fn replace_placeholders(project: &Project, path: &Path) -> String {
     let domain = project.domain.split_once(".").unwrap();
+    let template = format!(
+        "template/{}/{}",
+        project.language.as_str(),
+        project.preset.as_str()
+    );
+    dbg!(&template);
     let path = path
         .to_str()
         .unwrap()
-        .replace("template", &project.name)
+        .replace(&template, &project.name)
         .replace("project-name", &project.name)
         .replace("org", domain.0)
         .replace("example", domain.1);
@@ -52,7 +58,12 @@ fn replace_placeholders(project: &Project, path: &Path) -> String {
 }
 
 fn get_structure(project: &Project) -> Vec<PathBuf> {
-    let paths = fs::read_dir(format!("template/{}/", project.language.as_str())).unwrap();
+    let paths = fs::read_dir(format!(
+        "template/{}/{}/",
+        project.language.as_str(),
+        project.preset
+    ))
+    .unwrap();
     paths
         .into_iter()
         .map(|path| get_childs(path.unwrap().path()))
