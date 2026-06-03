@@ -46,7 +46,7 @@ fn replace_placeholders(project: &Project, path: &Path) -> String {
         project.language.as_str(),
         project.preset.as_str()
     );
-    dbg!(&template);
+
     let path = path
         .to_str()
         .unwrap()
@@ -54,6 +54,7 @@ fn replace_placeholders(project: &Project, path: &Path) -> String {
         .replace("project-name", &project.name)
         .replace("org", domain.0)
         .replace("example", domain.1);
+
     path
 }
 
