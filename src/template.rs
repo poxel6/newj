@@ -17,12 +17,17 @@ impl Template {
         }
     }
 
-    pub fn default(project: &Project) -> Result<(), io::Error> {
+    pub fn default(project: &Project) {
         let template = Template::new(project);
         let structure = template.get_structure();
-        template.craete_dirs(&structure)?;
-        template.create_files(&structure)?;
-        Ok(())
+
+        if let Err(err) = template.craete_dirs(&structure) {
+            eprintln!("error occurred creating directories: {err}")
+        }
+
+        if let Err(err) = template.create_files(&structure) {
+            eprintln!("error occurred creating files: {err}")
+        }
     }
 }
 

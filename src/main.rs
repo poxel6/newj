@@ -6,12 +6,7 @@ fn main() {
     let cli = Cli::from_args();
 
     let project = Project::from(cli);
-    if let Err(err) = project.init() {
-        match err.kind() {
-            io::ErrorKind::IsADirectory => (),
-            _ => eprintln!("{}", err.to_string()),
-        }
-    }
+    project.init();
 
     println!(
         "\t\x1b[1;32m{}:\x1b[0m {}",

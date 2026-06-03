@@ -40,7 +40,7 @@ impl From<Cli> for Project {
 }
 
 impl Project {
-    pub fn init(&self) -> Result<(), io::Error> {
+    pub fn init(&self) {
         Template::default(self)
     }
 }
