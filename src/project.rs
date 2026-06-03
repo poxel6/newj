@@ -1,5 +1,3 @@
-use std::io;
-
 use crate::{
     cli::{Cli, prompt},
     languages::Languages,

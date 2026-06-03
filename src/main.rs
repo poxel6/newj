@@ -1,5 +1,3 @@
-use std::io;
-
 use newj::{cli::Cli, project::Project};
 
 fn main() {
