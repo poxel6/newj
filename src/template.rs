@@ -6,12 +6,7 @@ use std::{
 
 use crate::project::Project;
 
-#[derive(Default, Debug)]
-pub struct Template {
-    pub name: String,
-    pub content: String,
-    pub path: String,
-}
+pub struct Template;
 
 impl Template {
     pub fn new(project: &Project) -> Result<(), io::Error> {
