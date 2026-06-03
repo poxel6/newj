@@ -41,6 +41,6 @@ impl From<Cli> for Project {
 
 impl Project {
     pub fn init(&self) -> Result<(), io::Error> {
-        Template::new(self)
+        Template::default(self)
     }
 }
